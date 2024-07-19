@@ -8,7 +8,7 @@ import TasksList from "@components/app/tasks/TasksList.astro";
 
 import { getProjects } from "@data/pocketbase";
 
-const projects = await getProjects();
+const projects = await getProjects({});
 ---
 
 <LayoutApp title="Dashboard">
