@@ -1,8 +1,8 @@
 ---
-import '@src/app.css'
+import "@src/app.css";
 import Sidebar from "@components/app/Sidebar.astro";
-import '@fontsource/m-plus-rounded-1c'
-import '@fontsource/m-plus-rounded-1c/800.css'
+import "@fontsource/m-plus-rounded-1c";
+import "@fontsource/m-plus-rounded-1c/800.css";
 const { title = "Secretplan" } = Astro.props;
 ---
 
@@ -13,9 +13,11 @@ const { title = "Secretplan" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content="A project management tool" />
-    {import.meta.env.DEV && <meta
-    http-equiv='Content-Security-Policy'
-    content="  
+    {
+      import.meta.env.DEV && (
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="  
       default-src 'self' data:; 
       script-src 'self' 'unsafe-inline' 'unsafe-eval';
       connect-src 'self'; 
@@ -24,7 +26,9 @@ const { title = "Secretplan" } = Astro.props;
       style-src 'self' 'unsafe-inline';
       object-src 'none';
     "
-  />}
+        />
+      )
+    }
     <script>
       import * as htmx from "htmx.org";
       import Alpine from "alpinejs";
@@ -36,6 +40,7 @@ const { title = "Secretplan" } = Astro.props;
         }
       }
 
+      htmx.config.selfRequestsOnly = true
       window.htmx = htmx; //optional
       window.Alpine = Alpine; //optional
 
@@ -44,76 +49,68 @@ const { title = "Secretplan" } = Astro.props;
       htmx.process(document.body);
     </script>
     <script is:inline>
-      document.addEventListener('DOMContentLoaded', () => {
-        document.addEventListener(
-          'htmx:responseError',
-          function (event) {
-            if (event.detail.failed) {
-              if (event.detail.xhr.status === 404) {
-                alert('Resource not found')
-              } else if (event.detail.xhr.responseText) {
-                alert(event.detail.xhr.responseText)
-              } else {
-                alert('Sorry, there was an error')
-              }
+      document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("htmx:responseError", function (event) {
+          if (event.detail.failed) {
+            if (event.detail.xhr.status === 404) {
+              alert("Resource not found");
+            } else if (event.detail.xhr.responseText) {
+              alert(event.detail.xhr.responseText);
+            } else {
+              alert("Sorry, there was an error");
             }
           }
-        )
-      })
-    
+        });
+        document.addEventListener("htmx:sendError", function (event) {
+          alert("A connection error occurred");
+        });
+      });
+
       function dragAndDropIntoTask() {
-        const maxImageSize = 5 * 1024 * 1024
-    
+        const maxImageSize = 5 * 1024 * 1024;
+
         return {
           drop(event) {
-            if (!event.dataTransfer.items) return
-    
-            const formData = new FormData()
-    
-            if (
-              parseInt(
-                event.currentTarget.dataset.imagesNumber
-              ) === 10
-            ) {
-              alert('Max number of images is 10')
-              return
+            if (!event.dataTransfer.items) return;
+
+            const formData = new FormData();
+
+            if (parseInt(event.currentTarget.dataset.imagesNumber) === 10) {
+              alert("Max number of images is 10");
+              return;
             }
             for (let item of event.dataTransfer.items) {
-              if (item.kind === 'file') {
-                const file = item.getAsFile()
-    
+              if (item.kind === "file") {
+                const file = item.getAsFile();
+
                 if (file) {
                   if (file.size > maxImageSize) {
-                    alert('Image too big, max size 5MB  ')
-                    return
+                    alert("Image too big, max size 5MB  ");
+                    return;
                   }
-                  if (!file.type.match('image.*')) {
-                    alert('Only images supported!')
-                    return
+                  if (!file.type.match("image.*")) {
+                    alert("Only images supported!");
+                    return;
                   }
-                  formData.append('images', file)
+                  formData.append("images", file);
                 }
               }
             }
-    
-            htmx.ajax(
-              'PUT',
-              event.currentTarget.getAttribute('hx-put'),
-              {
-                values: {
-                  images: formData.getAll('images'),
-                  action: 'upload',
-                },
-                source: event.currentTarget,
-              }
-            )
+
+            htmx.ajax("PUT", event.currentTarget.getAttribute("hx-put"), {
+              values: {
+                images: formData.getAll("images"),
+                action: "upload",
+              },
+              source: event.currentTarget,
+            });
           },
-        }
+        };
       }
     </script>
   </head>
 
-  <body x-data hx-boost='true'>
+  <body x-data hx-boost="true">
     <main class="min-h-screen dark:bg-black dark:text-white">
       <div class="max-w-5xl px-4 py-4 mx-auto">
         <dialog></dialog>
@@ -124,7 +121,7 @@ const { title = "Secretplan" } = Astro.props;
           </div>
           <div class="w-full sm:w-2/3" x-data="{showMenu : false}">
             <div x-show="showMenu">
-              <div x-show='showMenu' x-cloak>
+              <div x-show="showMenu" x-cloak>
                 <Sidebar />
               </div>
             </div>
