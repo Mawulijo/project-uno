@@ -1,5 +1,5 @@
 import PocketBase from 'pocketbase'
-import type { TypedPocketBase, ProjectsResponse, ProjectsRecord, TasksRecord, TasksResponse, TeamsRecord } from './pocketbase-types'
+import type { TypedPocketBase, ProjectsResponse, ProjectsRecord, TasksRecord, TasksResponse, TeamsRecord, UsersResponse, TeamsResponse, InvitesResponse } from './pocketbase-types'
 
 export const pb = new PocketBase(import.meta.env.POCKETBASE_URL ||
   process.env.POCKETBASE_URL) as TypedPocketBase
@@ -7,6 +7,13 @@ export const pb = new PocketBase(import.meta.env.POCKETBASE_URL ||
 // globally disable auto cancellation
 pb.autoCancellation(false)
 
+type TexpandTeam = {
+  tema: TeamsResponse
+}
+
+type TexpandMembers = {
+  members: UsersResponse[]
+}
 
 type TexpandProject = {
   project?: ProjectsResponse
@@ -80,6 +87,17 @@ export async function getTasks({
   return tasks
 }
 
+export async function getTask(id: string) {
+  const options = {
+    expand: 'project',
+  }
+
+  const task: TasksResponse<TexpandProject> = await pb
+    .collection('tasks')
+    .getOne(id, options)
+
+  return task
+}
 export async function deleteProject(id: string) {
   await pb.collection('projects').delete(id)
 }
@@ -207,4 +225,82 @@ export async function updateTeam(
   data: TeamsRecord
 ) {
   await pb.collection('teams').update(id, data)
+}
+
+export async function getMembersOfTeam(team_id: string) {
+  const team: TeamsResponse<TexpandMembers> = await pb
+    .collection('teams')
+    .getOne(team_id, {
+      expand: 'members'
+    })
+
+  return team.expand?.members
+}
+
+export async function getOwnerOfTeam(team: TeamsResponse) {
+  const user: UsersResponse = await pb
+    .collection('users')
+    .getOne(team.created_by)
+
+  return user
+}
+
+export async function getInvitesForTeam(team_id: string) {
+  const invites: InvitesResponse[] = await pb
+    .collection('invites')
+    .getFullList({
+      filter: `team = "${team_id}"`
+    })
+  return invites
+}
+
+export async function addInvite(
+  team_id: string,
+  email: string
+) {
+  await pb.collection('invites').create({
+    team: team_id,
+    email,
+    action: 'pending'
+  })
+}
+
+export async function getYourInvites() {
+  const options = {
+    filter: `email = "${pb.authStore.model?.email}"`,
+    expand: 'team',
+  }
+  const invites: InvitesResponse<TexpandTeam>[] = await pb
+    .collection('invites')
+    .getFullList(options)
+
+  return invites
+}
+
+export async function addMember(
+  team_id: string,
+  person_id: string,
+  invite_id: string
+) {
+  await pb.collection('teams').update(team_id, {
+    'members+': person_id,
+  })
+  await pb.collection('invites').update(invite_id, {
+    'action': "accepted",
+  })
+}
+
+export async function declineInvite(id: string) {
+  // await pb.collection('invites').delete(id)
+  await pb.collection('invites').update(id, {
+    'action': "declined",
+  })
+}
+
+export async function getInvite(id: string) {
+  const team: InvitesResponse = await pb
+    .collection('invites')
+    .getOne(id)
+
+  return team
 }
