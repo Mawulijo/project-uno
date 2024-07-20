@@ -24,8 +24,8 @@ export const POST: APIRoute = async ({
 
   if (!team) {
     return new Response(null, {
-      status: 204,
-      statusText: 'No Content',
+      status: 404,
+      statusText: 'Resource not found',
       headers: {
         'HX-Redirect': `/app/dashboard`
       }
