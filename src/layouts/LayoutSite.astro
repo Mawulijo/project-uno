@@ -1,19 +1,21 @@
 ---
-import TopBar from '@components/site/common/TopBar.astro'
-import Footer from '@components/site/common/Footer.astro'
-import '@src/site.css'
+import TopBar from "@components/site/common/TopBar.astro";
+import Footer from "@components/site/common/Footer.astro";
+import "@src/site.css";
 
-const { title = 'Secretplan' } = Astro.props
+const { title = "Project Uno" } = Astro.props;
 ---
 
-<html lang='en'>
+<html lang="en">
   <head>
-    <meta charset='utf-8' />
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-    <meta name='viewport' content='width=device-width' />
-    {import.meta.env.DEV && <meta
-      http-equiv='Content-Security-Policy'
-      content="  
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    {
+      import.meta.env.DEV && (
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="  
         default-src 'self' data:; 
         script-src 'self' https://challenges.cloudflare.com;
         style-src 'self' 'unsafe-inline';
@@ -22,15 +24,44 @@ const { title = 'Secretplan' } = Astro.props
         img-src 'self' data:;
         object-src 'none';
       "
-    />}
-    <title>Secretplan</title>
+        />
+      )
+    }
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <meta
+      name="theme-color"
+      content="#fff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#000"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <link rel="manifest" crossorigin="use-credentials" href="/manifest.json" />
+    <title>Project Uno</title>
     <title>{title}</title>
+
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/service-worker.js')
+            .catch(error => {
+              console.log('Service Worker registration failed: ', error)
+            })
+        })
+      }
+    </script>
   </head>
   <body class="dark:bg-black dark:text-white">
     <div class="max-w-5xl px-4 py-4 mx-auto">
-      <TopBar/>
-       <slot />
-	    <Footer />
+      <TopBar />
+      <slot />
+      <Footer />
     </div>
   </body>
 </html>

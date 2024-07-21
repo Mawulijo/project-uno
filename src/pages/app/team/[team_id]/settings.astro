@@ -29,14 +29,14 @@ const is_owner = await userIsTeamOwner(team_id);
         </div>
 
         <div class="flex items-center justify-between mx-auto max-w-7xl">
-            <a href={`/app/team/${team_id}`}>
+            <button hx-get={`/app/team/${team_id}/portal`}>
                 <button
                     type="button"
                     class="text-xl btn-header text-zinc-800 dark:text-white mt-3"
                 >
                     ◀︎ Back to the team
                 </button>
-            </a>
+            </button>
         </div>
     </div>
 

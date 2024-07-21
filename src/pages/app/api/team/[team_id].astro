@@ -6,7 +6,7 @@ import {
 } from '@lib/stripe'
 
 
-import { deleteTeam, updateTeam, getTeam } from '@data/pocketbase'
+import { deleteTeam, updateTeam, getTeam, addActivity } from '@data/pocketbase'
 
 const { team_id = '' } = Astro.params
 const team = await getTeam(team_id)
@@ -18,6 +18,14 @@ if (Astro.request.method === 'DELETE') {
   }
 
   await deleteTeam(team_id)
+
+  await addActivity({
+    team: '',
+    project: '',
+    text: `Team ${team.name} deleted`,
+    type: 'team_delete',
+  })
+
 
   return new Response(null, {
     status: 204,
@@ -35,13 +43,22 @@ if (Astro.request.method === 'PUT') {
   const action = formData.get('action') as string
 
   if (action === 'change_name') {
-    const team_name =
-      formData.get('team_name') as string
+    const team_name = formData.get('team_name') as string
     if (team_name) {
+
+      const old_name = team.name
+
       await updateTeam(team_id, {
         name: team_name,
       })
 
+      await addActivity({
+        team: team_id,
+        project: '',
+        text: `Team ${old_name} renamed to ${team_name}`,
+        type: 'team_rename',
+      })
+      
       return new Response(null, {
         status: 204,
         statusText: 'No Content',
