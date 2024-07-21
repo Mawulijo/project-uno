@@ -1,28 +1,38 @@
 import {
-    addMember,
-    declineInvite,
-    getInvite,
-  } from '@src/data/pocketbase'
-  
-  import { getCurrentUserId } from '@lib/auth'
-  
-  import type { APIRoute } from 'astro'
-  
-  export const POST: APIRoute = async ({ params }) => {
-    const invite = await getInvite(params.invite_id!)
-  
-    if (invite) {
-      await addMember(invite.team, getCurrentUserId(), invite.id)
+  addMember,
+  getInvite,
+  addActivity,
+  getTeam
+} from '@src/data/pocketbase'
+
+import { getCurrentUserId, getUserUsername } from '@lib/auth'
+
+import type { APIRoute } from 'astro'
+
+export const POST: APIRoute = async ({ params, request }) => {
+  const invite = await getInvite(params.invite_id!)
+  const team = await getTeam(invite.team)
+
+  if (invite) {
+    await addMember(invite.team, getCurrentUserId(), invite.id)
     //   await declineInvite(params.invite_id!)
-    }
-  
-    return new Response(null, {
-      status: 204,
-      statusText: 'No Content',
-      headers: {
-        'HX-Redirect': invite
-          ? `/app/team/${invite.team}`
-          : '/app/dashboard',
-      },
-    })
   }
+
+  await addActivity({
+    team: team.id,
+    project: '',
+    text: `Team ${team.name
+      } invite accepted by @${await getUserUsername(request)}`,
+    type: 'invite_accepted'
+  })
+
+  return new Response(null, {
+    status: 204,
+    statusText: 'No Content',
+    headers: {
+      'HX-Redirect': invite
+        ? `/app/team/${invite.team}`
+        : '/app/dashboard',
+    },
+  })
+}

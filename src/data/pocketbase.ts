@@ -1,5 +1,6 @@
 import PocketBase from 'pocketbase'
-import type { TypedPocketBase, ProjectsResponse, ProjectsRecord, TasksRecord, TasksResponse, TeamsRecord, UsersResponse, TeamsResponse, InvitesResponse } from './pocketbase-types'
+import type { TypedPocketBase, ProjectsResponse, ProjectsRecord, TasksRecord, TasksResponse, TeamsRecord, UsersResponse, TeamsResponse, InvitesResponse, ActivitiesResponse } from './pocketbase-types'
+import { getUserObjectFromDb } from '@lib/auth'
 
 export const pb = new PocketBase(import.meta.env.POCKETBASE_URL ||
   process.env.POCKETBASE_URL) as TypedPocketBase
@@ -19,6 +20,9 @@ type TexpandProject = {
   project?: ProjectsResponse
 }
 
+type TexpandUser = {
+  user: UsersResponse
+}
 export async function getProjects({team_id}: {team_id?: string}) {
   const options = {filter: 'team = ""'}
   if(team_id){
@@ -303,4 +307,113 @@ export async function getInvite(id: string) {
     .getOne(id)
 
   return team
+}
+
+export async function addActivity({
+  team,
+  project,
+  text,
+  type
+}: {
+  team: string
+  project: string
+  text: string
+  type: string
+}) {
+  await pb.collection('activities').create({
+    team,
+    project,
+    text,
+    type,
+    user: pb.authStore.model?.id
+  })
+}
+
+export async function getActivities({
+  team_id,
+  project_id,
+  user_id
+}: {
+  team_id?: string
+  project_id?: string
+  user_id?: string
+}) {
+  const options = {
+    filter: '',
+    sort: '-created',
+    expand: 'team,project,user'
+  }
+
+  if (team_id) {
+    options.filter += `team = "${team_id}"`
+  }
+  if (project_id) {
+    if (options.filter.length === 0) {
+      options.filter += `project = "${project_id}"`
+    } else {
+      options.filter += ` && project = "${project_id}"`
+    }
+  }
+  if (user_id) {
+    if (options.filter.length === 0) {
+      options.filter += `user = "${user_id}"`
+    } else {
+      options.filter += ` && user = "${user_id}"`
+    }
+  }
+
+  if (!team_id && !project_id && !user_id) {
+    //@ts-expect-error
+    options.perPage = 100
+  }
+
+  //@ts-expect-error
+  const activities: ActivitiesResponse<
+    TexpandTeam,
+    TexpandProject,
+    TexpandUser
+  >[] = await pb
+    .collection('activities')
+    .getFullList(options)
+
+  return activities
+}
+
+export async function getAllProjects() {
+  const projects = await pb
+    .collection('projects')
+    .getFullList()
+
+  return projects.sort(
+    (a, b) => getStatus(a) - getStatus(b)
+  )
+}
+
+export async function getCollaborators() {
+  const teams = await getTeams()
+
+  const collaborators: UsersResponse[] = []
+
+  await Promise.all(
+    teams.map(async (team) => {
+      await Promise.all(
+        team.members.map(async (member) => {
+          const user = await getUserObjectFromDb(member)
+          if (
+            !collaborators.find(
+              (collaborator) =>
+                collaborator.username === user.username
+            )
+          ) {
+            collaborators.push(user)
+          }
+        })
+      )
+      collaborators.push(await getOwnerOfTeam(team))
+    })
+  )
+
+  return collaborators.sort((a, b) =>
+    a.username.localeCompare(b.username)
+  )
 }

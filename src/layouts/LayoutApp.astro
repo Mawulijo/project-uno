@@ -3,7 +3,7 @@ import "@src/app.css";
 import Sidebar from "@components/app/Sidebar.astro";
 import "@fontsource/m-plus-rounded-1c";
 import "@fontsource/m-plus-rounded-1c/800.css";
-const { title = "Secretplan" } = Astro.props;
+const { title = "Project Uno" } = Astro.props;
 ---
 
 <html lang="en">
@@ -29,6 +29,22 @@ const { title = "Secretplan" } = Astro.props;
         />
       )
     }
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <meta
+      name="theme-color"
+      content="#fff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#000"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <link rel="manifest" crossorigin="use-credentials" href="/manifest.json" />
+
     <script>
       import * as htmx from "htmx.org";
       import Alpine from "alpinejs";
@@ -40,7 +56,7 @@ const { title = "Secretplan" } = Astro.props;
         }
       }
 
-      htmx.config.selfRequestsOnly = true
+      htmx.config.selfRequestsOnly = true;
       window.htmx = htmx; //optional
       window.Alpine = Alpine; //optional
 
@@ -108,6 +124,18 @@ const { title = "Secretplan" } = Astro.props;
         };
       }
     </script>
+
+<script is:inline>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .catch(error => {
+          console.log('Service Worker registration failed: ', error)
+        })
+    })
+  }
+</script>
   </head>
 
   <body x-data hx-boost="true">

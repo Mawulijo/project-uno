@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Activities = "activities",
 	Invites = "invites",
 	Projects = "projects",
 	Tasks = "tasks",
@@ -36,6 +37,14 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export type ActivitiesRecord = {
+	project?: RecordIdString
+	team?: RecordIdString
+	text?: string
+	type?: string
+	user?: RecordIdString
+}
 
 export type InvitesRecord = {
 	action?: string
@@ -91,6 +100,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ActivitiesResponse<Texpand = unknown> = Required<ActivitiesRecord> & BaseSystemFields<Texpand>
 export type InvitesResponse<Texpand = unknown> = Required<InvitesRecord> & BaseSystemFields<Texpand>
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type TasksResponse<Texpand = unknown> = Required<TasksRecord> & BaseSystemFields<Texpand>
@@ -100,6 +110,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	activities: ActivitiesRecord
 	invites: InvitesRecord
 	projects: ProjectsRecord
 	tasks: TasksRecord
@@ -108,6 +119,7 @@ export type CollectionRecords = {
 }
 
 export type CollectionResponses = {
+	activities: ActivitiesResponse
 	invites: InvitesResponse
 	projects: ProjectsResponse
 	tasks: TasksResponse
@@ -119,6 +131,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'activities'): RecordService<ActivitiesResponse>
 	collection(idOrName: 'invites'): RecordService<InvitesResponse>
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
 	collection(idOrName: 'tasks'): RecordService<TasksResponse>
