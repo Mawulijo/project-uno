@@ -125,20 +125,20 @@ const { title = "Project Uno" } = Astro.props;
       }
     </script>
 
-<script is:inline>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .catch(error => {
-          console.log('Service Worker registration failed: ', error)
-        })
-    })
-  }
-</script>
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .catch((error) => {
+              console.log("Service Worker registration failed: ", error);
+            });
+        });
+      }
+    </script>
   </head>
 
-  <body x-data hx-boost="true">
+  <body x-data hx-boost="true" class='select-none'>
     <main class="min-h-screen dark:bg-black dark:text-white">
       <div class="max-w-5xl px-4 py-4 mx-auto">
         <dialog></dialog>
@@ -153,7 +153,9 @@ const { title = "Project Uno" } = Astro.props;
                 <Sidebar />
               </div>
             </div>
-            <slot />
+            <div id="slot">
+              <slot />
+            </div>
           </div>
         </div>
       </div>

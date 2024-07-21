@@ -1,10 +1,11 @@
 ---
 import LayoutApp from "@layouts/LayoutApp.astro";
 import { getProject, getTeam } from "@data/pocketbase";
-import ButtonAddNewTask from "@components/app/tasks/ButtonAddNewTask.astro";
-import HamburgerMenuButton from "@components/app/HamburgerMenuButton.astro";
-import ProjectStatus from "@components/app/projects/ProjectStatus.astro";
-import TasksList from "@components/app/tasks/TasksList.astro";
+// import ButtonAddNewTask from "@components/app/tasks/ButtonAddNewTask.astro";
+// import HamburgerMenuButton from "@components/app/HamburgerMenuButton.astro";
+// import ProjectStatus from "@components/app/projects/ProjectStatus.astro";
+// import TasksList from "@components/app/tasks/TasksList.astro";
+import SingleProject from '@components/app/projects/SingleProject.astro'
 const { project_id = "" } = Astro.params;
 
 let project;
@@ -19,10 +20,13 @@ try {
 } catch (e) {
   return Astro.redirect("/app/dashboard");
 }
+
+Astro.response.headers.set('Cache-Control', 'max-age=10')
 ---
 
 <LayoutApp title={project.name}>
-  <div class="mx-auto text-white max-w-7xl space-y-6">
+  <SingleProject project={project} />
+  <!-- <div class="mx-auto text-white max-w-7xl space-y-6">
     <div
       class="rounded-lg bg-zinc-900 px-5 py-4 sm:py-2.5 text-xl sm:text-2xl md:text-3xl text-white uppercase text-center font-extrabold font-rounded"
     >
@@ -91,5 +95,6 @@ try {
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+  
 </LayoutApp>
