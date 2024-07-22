@@ -1,19 +1,34 @@
 ---
-export const prerender = true
+// export const prerender = true
 import MarkdownLayout from '@layouts/MarkdownLayout.astro'
-import { getCollection } from 'astro:content'
+// import { getCollection } from 'astro:content'
 
-export async function getStaticPaths() {
-  let posts = await getCollection('blog')
+// export async function getStaticPaths() {
+//   let posts = await getCollection('blog')
 
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }))
+//   return posts.map((post) => ({
+//     params: { slug: post.slug },
+//     props: { post },
+//   }))
+// }
+
+// const { post } = Astro.props
+// const { Content } = await post.render()
+
+import { getEntry } from "astro:content";
+// 1. Get the slug from the incoming server request
+const { slug } = Astro.params;
+if (slug === undefined) {
+  throw new Error("Slug is required");
 }
-
-const { post } = Astro.props
-const { Content } = await post.render()
+// 2. Query for the entry directly using the request slug
+const post = await getEntry("blog", slug);
+// 3. Redirect if the entry does not exist
+if (post === undefined) {
+  return Astro.redirect("/404");
+}
+// 4. (Optional) Render the entry to HTML in the template
+const { Content } = await post.render();
 ---
 
 <MarkdownLayout title={post.data.title} date={post.data.date}>
