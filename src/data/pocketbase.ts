@@ -191,6 +191,42 @@ export function processImages(task: TasksResponse) {
   return images
 }
 
+// export function processImages(task: TasksResponse) {
+//   // need to replace internal url with public url for the internet to see
+//   // railway uses internal but we switch to external just before showing to the internet
+//   // this function takes TaskResponse meaning it only gets from the db not write so no harm to the db.
+
+//   const pocketbaseUrlPublicRailway: string =
+//     import.meta.env.POCKERBASE_URL_PUBLIC || process.env.POCKETBASE_URL_PUBLIC;
+//   const pocketbaseInternal: string =
+//     import.meta.env.POCKERBASE_URL || process.env.POCKETBASE_URL;
+
+//   type ImageItem = {
+//     name: string;
+//     url: string;
+//     url_larger: string;
+//   };
+
+//   const images: ImageItem[] = [];
+
+//   task.images?.map((image: string) => {
+//     images.push({
+//       name: image,
+//       url: pb.files
+//         .getUrl(task, image, {
+//           thumb: '0x200',
+//         })
+//         .replace(pocketbaseInternal, pocketbaseUrlPublicRailway),
+//       url_larger: pb.files
+//         .getUrl(task, image, {
+//           thumb: '0x800',
+//         })
+//         .replace(pocketbaseInternal, pocketbaseUrlPublicRailway),
+//     });
+//   });
+//   return images;
+// }
+
 export async function addTeam(name: string) {
   let team = await pb.collection('teams').create({
     name,
