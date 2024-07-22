@@ -9,7 +9,7 @@ export const pb = new PocketBase(import.meta.env.POCKETBASE_URL ||
 pb.autoCancellation(false)
 
 type TexpandTeam = {
-  tema: TeamsResponse
+  team: TeamsResponse
 }
 
 type TexpandMembers = {
