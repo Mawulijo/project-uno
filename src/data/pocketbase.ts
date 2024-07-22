@@ -417,3 +417,7 @@ export async function getCollaborators() {
     a.username.localeCompare(b.username)
   )
 }
+
+export async function sendInviteEmail(email: string) {
+  // await pb.collection('users').(email)
+}
