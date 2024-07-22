@@ -1,4 +1,4 @@
-FROM node:lts-slim as runtime
+FROM node:lts-slim AS runtime
 WORKDIR /app
 
 # Ensure that both node_modules and package-lock.json are removed.
@@ -20,4 +20,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Define the command to run your application.
-CMD node ./dist/server/entry.mjs
+CMD ["node", "./dist/server/entry.mjs"]
