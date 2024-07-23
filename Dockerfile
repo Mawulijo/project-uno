@@ -22,4 +22,5 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Define the command to run your application.
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ls && node ./dist/server/entry.mjs
+# CMD ["node", "./dist/server/entry.mjs"]
