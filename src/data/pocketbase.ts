@@ -196,8 +196,8 @@ export function processImages(task: TasksResponse) {
 //   // railway uses internal but we switch to external just before showing to the internet
 //   // this function takes TaskResponse meaning it only gets from the db not write so no harm to the db.
 
-//   const pocketbaseUrlPublicRailway: string =
-//     import.meta.env.POCKERBASE_URL_PUBLIC || process.env.POCKETBASE_URL_PUBLIC;
+//   const pocketbasePublicUrlRailway: string =
+//     import.meta.env.POCKETBASE_PUBLIC_URL || process.env.POCKETBASE_PUBLIC_URL;
 //   const pocketbaseInternal: string =
 //     import.meta.env.POCKERBASE_URL || process.env.POCKETBASE_URL;
 

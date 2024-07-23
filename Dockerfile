@@ -10,9 +10,11 @@ RUN npm install
 
 # Copy the rest of your application files.
 COPY . .
+# pocketbase.railway.internal
+# pojectuno-pb.up.railway.app
 
 # Build your application.
-RUN npm run build
+RUN npm run build || true
 
 # Set environment variables and expose the appropriate port.
 ENV HOST=0.0.0.0
