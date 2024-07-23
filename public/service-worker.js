@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pwa-cache-v1'
+const CACHE_NAME = 'pwa-cache-v1-uno'
 const ASSETS_TO_CACHE = [
   'offline.html',
   'favicon.svg',
