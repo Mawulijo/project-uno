@@ -20,3 +20,4 @@ EXPOSE 3000
 
 # Define the command to run your application.
 CMD ["/bin/sh", "-c", "ls -a && node ./dist/server/entry.mjs"]
+# CMD ls && node ./dist/server/entry.mjs
