@@ -18,7 +18,6 @@ if (Astro.request.method === "POST") {
     const formData = await Astro.request.formData();
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    console.log(formData.get("cf-turnstile-response"))
     const is_valid_turnstile = await processTurnstile(
         formData.get("cf-turnstile-response")?.toString() || "",
     );
@@ -43,7 +42,7 @@ if (Astro.request.method === "POST") {
 <LayoutSite title="Project Uno">
     <script
         is:inline
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
         defer
         async></script>
     <div class="w-full max-w-md mx-auto">
