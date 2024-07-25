@@ -1,4 +1,3 @@
-/// <reference path="../../../pocketbase/pocketbase_0.21.3_darwin_arm64/pb_data/types.d.ts" />
 
 onRecordAfterCreateRequest((e) => {
     const message = new MailerMessage({
