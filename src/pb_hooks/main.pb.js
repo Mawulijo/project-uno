@@ -6,7 +6,7 @@ onRecordAfterCreateRequest((e) => {
             name:    $app.settings().meta.senderName,
         },
         to:      [{address: e.record.email()}],
-        subject: "You've been invited to a Team",
+        subject: `You've been invited to a ${e.record.name()} Team`,
         html:    "Welcome buddy...",
         // bcc, cc and custom headers are also supported...
     })
